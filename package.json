@@ -12,7 +12,9 @@
     "lint": "eslint src scripts",
     "lint:fix": "npm run lint -- --fix",
     "start": "nodemon ./src/server.js",
-    "seed": "node ./scripts/seedDb.js"
+    "seed": "node ./scripts/seedDb.js",
+    "pretest": "npm run seed",
+    "test": "./node_modules/.bin/jest --coverage --silent"
   },
   "devDependencies": {
     "concurrently": "^8.0.1",
@@ -21,7 +23,9 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-n": "^16.0.1",
     "eslint-plugin-promise": "^6.1.1",
-    "nodemon": "^2.0.22"
+    "jest": "^29.5.0",
+    "nodemon": "^2.0.22",
+    "supertest": "^6.3.3"
   },
   "engines": {
     "node": ">=10.16.3"

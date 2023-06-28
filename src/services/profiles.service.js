@@ -10,6 +10,17 @@ async function getProfileClient (clientId) {
   return clientProfile
 }
 
+async function getProfileContractor (contractorId) {
+  if (!contractorId) throw new Error('The contractor id is required')
+
+  const { Profile } = sequelize.models
+
+  const contractorProfile = await Profile.findOne({ where: { id: contractorId, type: 'contractor' } })
+
+  return contractorProfile
+}
+
 module.exports = {
   getProfileClient,
+  getProfileContractor,
 }

@@ -2,7 +2,8 @@ module.exports = {
   env: {
     browser: true,
     commonjs: true,
-    es2021: true
+    es2021: true,
+    'jest/globals': true,
   },
   extends: 'standard',
   overrides: [
@@ -21,6 +22,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest'
   },
+  plugins: ['jest'],
   rules: {
     'comma-dangle': 0
   }
