@@ -68,7 +68,10 @@ router.post('/:jobId/pay', getProfile, async (req, res) => {
     const success = await sequelize.transaction(async (t) => {
       await Profile.decrement('balance', { by: job.price, where: { id: profile.id }, transaction: t })
       await Profile.increment('balance', { by: job.price, where: { id: contractorId }, transaction: t })
-      await Job.update({ paid: true }, { where: { id: job.id }, transaction: t })
+      await Job.update({
+        paid: true,
+        paymentDate: new Date().toISOString(),
+      }, { where: { id: job.id }, transaction: t })
 
       return true
     })
