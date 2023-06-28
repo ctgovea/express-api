@@ -49,7 +49,7 @@ async function getUnpaidJobs (profileId) {
 /**
  * gets the total amount owned
  */
-async function getTotalOwned (profileId) {
+async function getTotalOwed (profileId) {
   const unpaidJobs = await getUnpaidJobs(profileId)
   const total = unpaidJobs.reduce((total, { price }) => total + price, 0)
 
@@ -99,6 +99,6 @@ async function payJob (jobId, clientId) {
 module.exports = {
   getJobById,
   getUnpaidJobs,
-  getTotalOwned,
+  getTotalOwed,
   payJob,
 }
