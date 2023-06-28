@@ -1,6 +1,16 @@
 const { sequelize } = require('../model')
 const jobsService = require('./jobs.service')
 
+async function getProfileClient (clientId) {
+  if (!clientId) throw new Error('The client id is required')
+
+  const { Profile } = sequelize.models
+
+  const clientProfile = await Profile.findOne({ where: { id: clientId, type: 'client' } })
+
+  return clientProfile
+}
+
 /**
  * Adds a balance to a client profile
  */
@@ -11,7 +21,7 @@ async function addBalance (profileId, amount) {
   const { Profile } = sequelize.models
   const MAXIMUM_OWNED_PERCENT = 0.25
 
-  const client = await Profile.findOne({ where: { id: profileId, type: 'client' } })
+  const client = await getProfileClient(profileId)
 
   // Only clients can deposit!
   if (!client) throw new Error('You need to be a client to deposit')
@@ -27,5 +37,6 @@ async function addBalance (profileId, amount) {
 }
 
 module.exports = {
-  addBalance
+  addBalance,
+  getProfileClient,
 }
