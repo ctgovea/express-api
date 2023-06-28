@@ -1,7 +1,7 @@
 const { Router } = require('express')
-const { Op } = require('sequelize')
 const { getProfile } = require('../middleware/getProfile')
 const { sequelize } = require('../model')
+const { jobsService } = require('../services/')
 
 const router = Router()
 
@@ -10,22 +10,9 @@ const router = Router()
  */
 router.get('/unpaid', getProfile, async (req, res) => {
   const { profile } = req
-  const { Contract, Job } = req.app.get('models')
 
-  const unpaid = await Job.findAll({
-    where: {
-      [Op.or]: [{ paid: null }, { paid: 0 }]
-    },
-    include: [
-      {
-        model: Contract,
-        where: {
-          [Op.or]: [{ ContractorId: profile.id }, { ClientId: profile.id }],
-          status: 'in_progress',
-        }
-      }
-    ]
-  })
+  const unpaid = await jobsService.getUnpaidJobs(profile.id)
+
   if (!unpaid) return res.status(404).end()
   res.json(unpaid)
 })
@@ -34,7 +21,7 @@ router.get('/unpaid', getProfile, async (req, res) => {
  * a client pays for a job using a transaction
  */
 router.post('/:jobId/pay', getProfile, async (req, res) => {
-  const { Job, Profile, Contract } = req.app.get('models')
+  const { Job, Profile } = req.app.get('models')
   const { profile } = req
   const { jobId } = req.params
   const client = await Profile.findOne({ where: { id: profile.id, type: 'client' } })
@@ -42,15 +29,7 @@ router.post('/:jobId/pay', getProfile, async (req, res) => {
   // Only clients can pay!
   if (!client) return res.status(400).end('You need to be a client to pay a job')
 
-  const job = await Job.findOne({
-    where: { id: jobId },
-    include: [
-      {
-        model: Contract,
-        where: { ClientId: profile.id }
-      }
-    ]
-  })
+  const job = await jobsService.getJobById(jobId, profile.id)
 
   if (!job) return res.status(404).end()
 
